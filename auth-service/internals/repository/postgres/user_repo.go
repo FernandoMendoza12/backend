@@ -23,7 +23,7 @@ func (r *userRepository) Create(user *domain.User) error {
 
 func (r *userRepository) FindByUser(username string) (*domain.User, error) {
 	var user *domain.User
-	result := r.db.Where("username=?", username).First(&user)
+	result := r.db.Where("username= ? ", username).First(&user)
 	if result != nil {
 		return nil, result.Error
 	}

@@ -8,7 +8,6 @@ import (
 
 	"auth-service/internals/domain"
 	"auth-service/internals/service"
-
 )
 
 type AuthHandler struct {
@@ -35,7 +34,7 @@ func (h *AuthHandler) Alive(c *gin.Context) {
 
 func (h *AuthHandler) Register(c *gin.Context) {
 	var request domain.RegisterRequest
-	if err := c.ShouldBindJSON(request); err != nil {
+	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
@@ -50,9 +49,21 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 func (h *AuthHandler) Login(c *gin.Context) {
 	var request domain.LoginRequest
-	if err := c.ShouldBindJSON(request); err != nil {
+	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
+
+	token, err := h.userService.LoginUser(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "loggin succesfully",
+		"token":   token,
+	})
+	return
 
 }

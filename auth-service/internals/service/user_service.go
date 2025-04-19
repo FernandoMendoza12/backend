@@ -10,7 +10,6 @@ import (
 	"auth-service/internals/domain"
 	"auth-service/internals/repository"
 	"auth-service/internals/utils"
-
 )
 
 type AuthService struct {
@@ -52,7 +51,7 @@ func (s *AuthService) RegisterUser(req domain.RegisterRequest) error {
 func (s *AuthService) LoginUser(req domain.LoginRequest) (string, error) {
 	user, err := s.repo.FindByUserOrEmail(req.UsernameOrEmail)
 	if err != nil {
-		return "", fmt.Errorf("usuario no encontrado", err)
+		return "", fmt.Errorf("usuario no encontrado", err.Error())
 	}
 
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
@@ -64,5 +63,5 @@ func (s *AuthService) LoginUser(req domain.LoginRequest) (string, error) {
 		return "", fmt.Errorf("error generating jwtoken", err)
 	}
 
-	return token,nil
+	return token, nil
 }

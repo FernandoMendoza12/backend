@@ -25,7 +25,9 @@ func main() {
 	router := gin.Default()
 	authHandler.SetupRoutes(router)
 
-	port := "8081"
+	port := ":8081"
 	log.Printf("auth service running on port: %s", port)
+
+	router.Run(port)
 
 }
