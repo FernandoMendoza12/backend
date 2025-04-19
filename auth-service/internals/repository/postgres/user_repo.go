@@ -5,7 +5,6 @@ import (
 
 	"auth-service/internals/domain"
 	"auth-service/internals/repository"
-
 )
 
 type userRepository struct {
@@ -23,10 +22,19 @@ func (r *userRepository) Create(user *domain.User) error {
 }
 
 func (r *userRepository) FindByUser(username string) (*domain.User, error) {
-	var user domain.User
+	var user *domain.User
 	result := r.db.Where("username=?", username).First(&user)
 	if result != nil {
 		return nil, result.Error
 	}
-	return &user, nil
+	return user, nil
+}
+
+func (r *userRepository) FindByUserOrEmail(usernameOrEmail string) (*domain.User, error) {
+	var user *domain.User
+	result := r.db.Where("username = ? or email = ?", usernameOrEmail).First(&user)
+	if result != nil {
+		return nil, result.Error
+	}
+	return user, nil
 }

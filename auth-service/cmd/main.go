@@ -2,6 +2,14 @@ package main
 
 import (
 	"log"
+
+	"github.com/gin-gonic/gin"
+
+	"auth-service/internals/config"
+	"auth-service/internals/handler"
+	"auth-service/internals/repository/postgres"
+	"auth-service/internals/service"
+
 )
 
 func main() {
@@ -11,10 +19,13 @@ func main() {
 	}
 
 	userRepo := postgres.NewUserRepository(db)
-	authService := auth.NewAuthService(userRepo)
-	router := handler.NewRouter(authService)
+	authService := service.NewAuthService(userRepo)
+	authHandler := handler.NewAuthHandler(authService)
+
+	router := gin.Default()
+	authHandler.SetupRoutes(router)
 
 	port := "8081"
 	log.Printf("auth service running on port: %s", port)
-	router.Run(":" + port)
+
 }
